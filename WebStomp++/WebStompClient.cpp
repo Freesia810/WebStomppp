@@ -17,7 +17,7 @@ void webstomppp::WebStompClient::_message_dispatcher(websocketpp::connection_hdl
 			{
 				auto it = _topic_callback_map.find(stomp_msg.header["destination"]);
 				if (it != _topic_callback_map.end()) {
-					(*(it->second))(stomp_msg);
+					(it->second)(stomp_msg);
 
 					StompAckFrame frame(stomp_msg.header["message-id"]);
 					char* buf = nullptr;
@@ -98,7 +98,7 @@ void webstomppp::WebStompClient::Run()
 	_ws_client.run();
 }
 
-void webstomppp::WebStompClient::Subscribe(std::string destination, webstomppp::callback_pt callback){
+void webstomppp::WebStompClient::Subscribe(std::string destination, webstomppp::callback_func callback){
 	auto it = this->_topic_id_map.find(destination);
 	if (it != _topic_id_map.end()) return;
 

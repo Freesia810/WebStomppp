@@ -7,13 +7,14 @@
 #include <string>
 #include <atomic>
 #include <thread>
+#include <function>
 
 #include "WebStompType.h"
 
 namespace webstomppp {
 	using client = websocketpp::client<websocketpp::config::asio_client>;
 	using message_ptr = websocketpp::config::asio_client::message_type::ptr;
-	using callback_pt = void(*)(StompFrame);
+	using callback_func = std::function<void(StompFrame)>
 	using stomp_client_ptr = std::shared_ptr<WebStompClient>;
 
 	class WebStompClient {
@@ -25,7 +26,7 @@ namespace webstomppp {
 
 		uint64_t subscribe_id_gen{ 0 };
 		std::unordered_map<std::string, uint64_t> _topic_id_map{};
-		std::unordered_map<std::string, callback_pt> _topic_callback_map{};
+		std::unordered_map<std::string, callback_func> _topic_callback_map{};
 
 		void _on_open(client* c, websocketpp::connection_hdl hdl);
 		void _message_dispatcher(websocketpp::connection_hdl hdl, client::message_ptr msg);
@@ -36,9 +37,9 @@ namespace webstomppp {
 		void Connect(std::string uri);
 		void Disconnect();
 		void Run();
-		void Subscribe(std::string destination, webstomppp::callback_pt callback);
+		void Subscribe(std::string destination, webstomppp::callback_func callback);
 		void Send(StompSendFrame& send_msg);
-		virtual void OnConnected() { std::cout << "ok\n"; };
-		virtual void OnDisconnected() { std::cout << "okk\n"; };
+		virtual void OnConnected() {};
+		virtual void OnDisconnected() {};
 	};
 };
