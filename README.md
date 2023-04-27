@@ -24,7 +24,7 @@ Stomp Support at the basis of WebSocketpp
 
 ### Frame封装
 WebStomppp提供了一些封装的帧模板，可以直接使用
--`StompFrame`: 不含任何命令类型的普通Frame
+- `StompFrame`: 不含任何命令类型的普通Frame
 - `StompSendFrame`: Send命令的Frame
 - `StompJsonSendFrame`: Send命令, 内容类型为application/json的Frame
 - `StompTextSendFrame`: Send命令, 内容类型为plain/text的Frame
