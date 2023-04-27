@@ -3,7 +3,6 @@
 #include <string>
 
 void webstomppp::WebStompClient::_message_dispatcher(websocketpp::connection_hdl hdl, client::message_ptr msg){
-	std::cout << msg->get_payload() << std::endl;
 	switch (msg->get_opcode())
 	{
 	case websocketpp::frame::opcode::TEXT:
