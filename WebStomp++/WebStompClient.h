@@ -38,6 +38,7 @@ namespace webstomppp {
 		void Disconnect();
 		void Run();
 		void Subscribe(std::string destination, webstomppp::callback_func callback);
+		void Unsubscribe(std::string destination);
 		void Send(StompSendFrame& send_msg);
 		virtual void OnConnected() {};
 		virtual void OnDisconnected() {};

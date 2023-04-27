@@ -18,10 +18,10 @@
     <ClCompile Include="WebStompClient.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="main.cpp">
+    <ClCompile Include="WebStompType.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="WebStompType.cpp">
+    <ClCompile Include="demo.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

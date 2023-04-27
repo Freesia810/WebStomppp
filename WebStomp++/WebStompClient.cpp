@@ -111,6 +111,20 @@ void webstomppp::WebStompClient::Subscribe(std::string destination, webstomppp::
 	_topic_id_map.insert(std::make_pair(destination, subscribe_id_gen++));
 	_topic_callback_map.insert(std::make_pair(destination, callback));
 }
+void webstomppp::WebStompClient::Unsubscribe(std::string destination)
+{
+	auto it = this->_topic_id_map.find(destination);
+	if (it != _topic_id_map.end()) return;
+
+	StompUnsubscribeFrame frame(it->second);
+	char* buf = nullptr;
+	size_t len = 0;
+	frame.toByteFrame(buf, len);
+	_con->send(buf, len, websocketpp::frame::opcode::TEXT);
+
+	_topic_id_map.erase(destination);
+	_topic_callback_map.erase(destination);
+}
 void webstomppp::WebStompClient::Disconnect()
 {
 	StompDisconnectFrame frame;

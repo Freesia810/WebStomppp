@@ -108,6 +108,16 @@ namespace webstomppp {
 		StompSubscribeFrame() = delete;
 	};
 
+	struct StompUnsubscribeFrame final : StompFrame {
+		StompUnsubscribeFrame(uint64_t id) {
+			type = StompCommandType::UNSUBSCRIBE;
+			_raw_header.emplace_back(StompHeaderKeyValue("id", std::to_string(id)));
+
+			body = "";
+		};
+		StompUnsubscribeFrame() = delete;
+	};
+
 	struct StompConnectFrame final : StompFrame {
 		StompConnectFrame(std::string host, StompFrameHeader* user_defined_header = nullptr) {
 			type = StompCommandType::CONNECT;
