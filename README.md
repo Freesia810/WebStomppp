@@ -30,7 +30,13 @@ WebStomppp提供了一些封装的帧模板，可以直接使用
 - `StompTextSendFrame`: Send命令, 内容类型为plain/text的Frame
 - `StompSubscribeFrame`: Subscribe命令的Frame
 
+## How to build
+`MSVC`: Visual Studio
+
+`UNIX`:  
+```shell
+cmake .
+make
+```
 # Todo List
-- Linux支持
-- Unsubscribe订阅
 - 服务端
