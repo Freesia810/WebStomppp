@@ -29,3 +29,8 @@ WebStomppp提供了一些封装的帧模板，可以直接使用
 - `StompJsonSendFrame`: Send命令, 内容类型为application/json的Frame
 - `StompTextSendFrame`: Send命令, 内容类型为plain/text的Frame
 - `StompSubscribeFrame`: Subscribe命令的Frame
+
+# Todo List
+- Linux支持
+- Unsubscribe订阅
+- 服务端
