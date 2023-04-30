@@ -17,12 +17,13 @@ void webstomppp::WebStompClient::_message_dispatcher(websocketpp::connection_hdl
 			{
 				auto it = _topic_callback_map.find(stomp_msg.header["destination"]);
 				if (it != _topic_callback_map.end()) {
-					(it->second)(stomp_msg);
+					
+					(it->second)(StompCallbackMsg(stomp_msg.header, stomp_msg.body.c_str()));
 
 					StompAckFrame frame(stomp_msg.header["message-id"].c_str());
 					char* buf = nullptr;
 					size_t len = 0;
-					frame.toByteFrame(buf, len);
+					StompAckFrame::toByteFrame(frame.toRawString().c_str(), buf, len);
 					_con->send(buf, len, websocketpp::frame::opcode::TEXT);
 				}
 				else {
@@ -54,7 +55,7 @@ void webstomppp::WebStompClient::_on_open(client* c, websocketpp::connection_hdl
 	StompConnectFrame frame(host.c_str());
 	char* buf = nullptr;
 	size_t len = 0;
-	frame.toByteFrame(buf, len);
+	StompConnectFrame::toByteFrame(frame.toRawString().c_str(), buf, len);
 	_con->send(buf, len, websocketpp::frame::opcode::TEXT);
 }
 
@@ -105,7 +106,7 @@ void webstomppp::WebStompClient::Subscribe(const char* destination, webstomppp::
 	StompSubscribeFrame frame(destination, subscribe_id_gen);
 	char* buf = nullptr;
 	size_t len = 0;
-	frame.toByteFrame(buf, len);
+	StompSubscribeFrame::toByteFrame(frame.toRawString().c_str(), buf, len);
 	_con->send(buf, len, websocketpp::frame::opcode::TEXT);
 
 	_topic_id_map.insert(std::make_pair(destination, subscribe_id_gen++));
@@ -119,7 +120,7 @@ void webstomppp::WebStompClient::Unsubscribe(const char* destination)
 	StompUnsubscribeFrame frame(it->second);
 	char* buf = nullptr;
 	size_t len = 0;
-	frame.toByteFrame(buf, len);
+	StompUnsubscribeFrame::toByteFrame(frame.toRawString().c_str(), buf, len);
 	_con->send(buf, len, websocketpp::frame::opcode::TEXT);
 
 	_topic_id_map.erase(destination);
@@ -130,7 +131,7 @@ void webstomppp::WebStompClient::Disconnect()
 	StompDisconnectFrame frame;
 	char* buf = nullptr;
 	size_t len = 0;
-	frame.toByteFrame(buf, len);
+	StompDisconnectFrame::toByteFrame(frame.toRawString().c_str(), buf, len);
 	_con->send(buf, len, websocketpp::frame::opcode::TEXT);
 	while (true) {
 		if (!_is_connected.load()) {
@@ -139,9 +140,9 @@ void webstomppp::WebStompClient::Disconnect()
 		}
 	}
 }
-void webstomppp::WebStompClient::Send(StompSendFrame& send_msg) {
+void webstomppp::WebStompClient::Send(const char* raw_str) {
 	char* buf = nullptr;
 	size_t len = 0;
-	send_msg.toByteFrame(buf, len);
+	StompSendFrame::toByteFrame(raw_str, buf, len);
 	_con->send(buf, len, websocketpp::frame::opcode::TEXT);
 }

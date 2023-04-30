@@ -1,7 +1,6 @@
 #include "WebStompType.h"
 #include <sstream>
 
-const char* webstomppp::disconnect_receipt_id = "4242";
 
 webstomppp::StompFrame::StompFrame(const char* raw_str)
 {
@@ -45,9 +44,10 @@ webstomppp::StompFrame::StompFrame(const char* raw_str)
 	ss >> body;
 }
 
-void webstomppp::StompFrame::toByteFrame(char*& buf, size_t& len)
+
+void webstomppp::StompFrame::toByteFrame(const char* raw_str, char*& buf, size_t& len)
 {
-	std::string str = toRawString();
+	std::string str = std::string(raw_str);
 	buf = new char[str.size() + 1];
 	strcpy_s(buf, str.size() + 1, str.c_str());
 	buf[str.size()] = '\0';
@@ -103,4 +103,15 @@ std::string webstomppp::StompFrame::toRawString()
 	ss << "\n" << body;
 
 	return ss.str();
+}
+
+webstomppp::StompCallbackMsg::StompCallbackMsg(StompFrameHeader& header, const char* body)
+{
+	this->body = body;
+	std::stringstream ss;
+	for (auto& kv : header) {
+		ss << kv.first << ":" << kv.second << "\n";
+	}
+	std::string str = ss.str();
+	strcpy_s(this->header_raw, 1024, str.c_str());
 }
