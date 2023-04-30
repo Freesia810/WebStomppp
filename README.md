@@ -7,7 +7,7 @@ Stomp Support at the basis of WebSocketpp
 - WebStompServer: Stomp协议服务端(doing)
 
 ## 依赖库
-- boost: https://github.com/blackberry/Boost
+- boost: https://www.boost.org/
 - WebSocket++: https://github.com/zaphoyd/websocketpp
 
 ## 接口介绍
