@@ -30,7 +30,7 @@ namespace webstomppp {
 		std::string body {};
 
 		StompFrame() = default;
-		StompFrame(std::string raw_str);
+		StompFrame(const char* raw_str);
 		friend class WebStompClient;
 	protected:
 		void toByteFrame(char*& buf, size_t& len);
@@ -39,7 +39,7 @@ namespace webstomppp {
 	};
 
 	struct StompSendFrame : StompFrame {
-		StompSendFrame(std::string& destination, std::string& content, std::string& content_type, StompFrameHeader* user_defined_header) {
+		StompSendFrame(const char* destination, const char* content, const char* content_type, StompFrameHeader* user_defined_header) {
 			type = StompCommandType::SEND;
 			_raw_header.emplace_back(StompHeaderKeyValue("destination", destination));
 			_raw_header.emplace_back(StompHeaderKeyValue("content-type", content_type));
@@ -59,7 +59,7 @@ namespace webstomppp {
 	};
 
 	struct StompJsonSendFrame final : StompSendFrame {
-		StompJsonSendFrame(std::string& destination, std::string& content, StompFrameHeader* user_defined_header = nullptr): StompSendFrame() {
+		StompJsonSendFrame(const char* destination, const char* content, StompFrameHeader* user_defined_header = nullptr): StompSendFrame() {
 			_raw_header.emplace_back(StompHeaderKeyValue("destination", destination));
 			_raw_header.emplace_back(StompHeaderKeyValue("content-type", "application/json"));
 
@@ -75,7 +75,7 @@ namespace webstomppp {
 	};
 
 	struct StompTextSendFrame final : StompSendFrame {
-		StompTextSendFrame(std::string& destination, std::string& content, StompFrameHeader* user_defined_header = nullptr): StompSendFrame() {
+		StompTextSendFrame(const char* destination, const char* content, StompFrameHeader* user_defined_header = nullptr): StompSendFrame() {
 			_raw_header.emplace_back(StompHeaderKeyValue("destination", destination));
 			_raw_header.emplace_back(StompHeaderKeyValue("content-type", "text/plain"));
 
@@ -91,7 +91,7 @@ namespace webstomppp {
 	};
 
 	struct StompSubscribeFrame final : StompFrame {
-		StompSubscribeFrame(std::string& destination, uint64_t id, StompFrameHeader* user_defined_header = nullptr) {
+		StompSubscribeFrame(const char* destination, uint64_t id, StompFrameHeader* user_defined_header = nullptr) {
 			type = StompCommandType::SUBSCRIBE;
 			_raw_header.emplace_back(StompHeaderKeyValue("id", std::to_string(id)));
 			_raw_header.emplace_back(StompHeaderKeyValue("destination", destination));
@@ -119,7 +119,7 @@ namespace webstomppp {
 	};
 
 	struct StompConnectFrame final : StompFrame {
-		StompConnectFrame(std::string host, StompFrameHeader* user_defined_header = nullptr) {
+		StompConnectFrame(const char* host, StompFrameHeader* user_defined_header = nullptr) {
 			type = StompCommandType::CONNECT;
 			_raw_header.emplace_back(StompHeaderKeyValue("accept-version", "1.2"));
 			_raw_header.emplace_back(StompHeaderKeyValue("host", host));
@@ -136,7 +136,7 @@ namespace webstomppp {
 	};
 
 	struct StompAckFrame final : StompFrame {
-		StompAckFrame(std::string msg_id, StompFrameHeader* user_defined_header = nullptr) {
+		StompAckFrame(const char* msg_id, StompFrameHeader* user_defined_header = nullptr) {
 			type = StompCommandType::ACK;
 			_raw_header.emplace_back(StompHeaderKeyValue("id", msg_id));
 

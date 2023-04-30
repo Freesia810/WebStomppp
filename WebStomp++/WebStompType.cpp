@@ -3,7 +3,7 @@
 
 const char* webstomppp::disconnect_receipt_id = "4242";
 
-webstomppp::StompFrame::StompFrame(std::string raw_str)
+webstomppp::StompFrame::StompFrame(const char* raw_str)
 {
 	std::stringstream ss;
 	ss << raw_str;
