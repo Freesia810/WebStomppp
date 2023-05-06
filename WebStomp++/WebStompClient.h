@@ -17,7 +17,7 @@ namespace webstomppp {
 	using callback_func = std::function<void(StompCallbackMsg)>;
 	using stomp_client_ptr = std::shared_ptr<WebStompClient>;
 
-	class __declspec(dllexport) WebStompClient {
+	class STOMP_PUBLIC WebStompClient {
 		client _ws_client;
 		websocketpp::lib::error_code _ec{};
 		client::connection_ptr _con{};
