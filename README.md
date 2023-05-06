@@ -40,3 +40,4 @@ make
 ```
 # Todo List
 - 服务端
+- GNU Support
