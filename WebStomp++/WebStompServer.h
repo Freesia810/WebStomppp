@@ -23,8 +23,8 @@ namespace webstomppp {
 		void RegisterUnsubscribeHandler(const char* destination, webstomppp::callback_func callback);
 		void SendToUser(uint64_t session_id, const char* destination, const char* content, const char* content_type = "text/plain", const char* raw_addition_header = nullptr);
 		void SendBroadcast(const char* destination, const char* content, const char* content_type = "text/plain", const char* raw_addition_header = nullptr);
-		virtual void onConnected() {};
-		virtual void onDisConnected() {};
+		virtual void onConnected(uint64_t session_id) {};
+		virtual void onDisConnected(uint64_t session_id) {};
 		virtual void onWebSocketOpen(uint64_t session_id) {};
 		virtual void onWebSocketClose(uint64_t session_id) {};
 	private:

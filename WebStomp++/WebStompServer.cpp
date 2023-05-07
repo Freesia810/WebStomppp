@@ -2,6 +2,9 @@
 
 void webstomppp::WebStompServer::Init()
 {
+	_ws_server.clear_access_channels(websocketpp::log::alevel::all);
+	_ws_server.clear_error_channels(websocketpp::log::elevel::all);
+
     _ws_server.init_asio();
 
     _ws_server.set_open_handler(websocketpp::lib::bind(&WebStompServer::onSocketOpen, this, websocketpp::lib::placeholders::_1));
@@ -141,6 +144,7 @@ void webstomppp::WebStompServer::onMessage(websocketpp::connection_hdl hdl, serv
 			size_t len = 0;
 			StompMessageFrame::toByteFrame(frame.toRawString().c_str(), buf, len);
 			_ws_server.send(hdl, buf, len, websocketpp::frame::opcode::TEXT);
+			this->onConnected(hdl_id_map[hdl]);
 		}
 		break;
 		case StompCommandType::SEND:
@@ -234,7 +238,7 @@ void webstomppp::WebStompServer::onMessage(websocketpp::connection_hdl hdl, serv
 			size_t len = 0;
 			StompReceiptFrame::toByteFrame(frame.toRawString().c_str(), buf, len);
 			_ws_server.send(hdl, buf, len, websocketpp::frame::opcode::TEXT);
-			this->onDisConnected();
+			this->onDisConnected(hdl_id_map[hdl]);
 		}
 		break;
 		default:
