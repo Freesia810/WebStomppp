@@ -22,6 +22,30 @@ webstomppp::StompFrame::StompFrame(const char* raw_str)
 	else if (command == "RECEIPT") {
 		type = StompCommandType::RECEIPT;
 	}
+	else if (command == "CONNECT") {
+		type = StompCommandType::CONNECT;
+	}
+	else if (command == "DISCONNECT") {
+		type = StompCommandType::DISCONNECT;
+	}
+	else if (command == "SEND") {
+		type = StompCommandType::SEND;
+	}
+	else if (command == "STOMP") {
+		type = StompCommandType::STOMP;
+	}
+	else if (command == "SUBSCRIBE") {
+		type = StompCommandType::SUBSCRIBE;
+	}
+	else if (command == "UNSUBSCRIBE") {
+		type = StompCommandType::UNSUBSCRIBE;
+	}
+	else if (command == "ACK") {
+		type = StompCommandType::ACK;
+	}
+	else if (command == "NACK") {
+		type = StompCommandType::NACK;
+	}
 	else {
 		type = StompCommandType::UNKNOWN;
 	}
@@ -105,13 +129,39 @@ std::string webstomppp::StompFrame::toRawString()
 	return ss.str();
 }
 
-webstomppp::StompCallbackMsg::StompCallbackMsg(StompFrameHeader& header, const char* body)
+webstomppp::StompCallbackMsg::StompCallbackMsg(StompFrameHeader& header, const char* body, uint64_t session_id, StompCommandType type)
 {
+	this->session_id = session_id;
+	this->type = type;
 	this->body = body;
 	std::stringstream ss;
 	for (auto& kv : header) {
 		ss << kv.first << ":" << kv.second << "\n";
 	}
 	std::string str = ss.str();
-	strcpy_s(this->header_raw, 1024, str.c_str());
+	strcpy_s(this->header_raw, 1023, str.c_str());
+}
+
+webstomppp::StompMessageFrame::StompMessageFrame(const char* destination, const char* subscription, const char* message_id, const char* content, const char* content_type, StompFrameHeader* user_defined_header)
+{
+	type = StompCommandType::MESSAGE;
+	_raw_header.emplace_back(StompHeaderKeyValue("subscription", subscription));
+	_raw_header.emplace_back(StompHeaderKeyValue("message-id", message_id));
+	_raw_header.emplace_back(StompHeaderKeyValue("destination", destination));
+	_raw_header.emplace_back(StompHeaderKeyValue("content-type", content_type));
+	auto len = strlen(content);
+	if (!len) {
+		_raw_header.emplace_back(StompHeaderKeyValue("content-length", std::to_string(len)));
+		if (user_defined_header->count("content-length")) {
+			user_defined_header->erase("content-length");
+		}
+	}
+
+	if (user_defined_header != nullptr) {
+		for (auto& kv : *user_defined_header) {
+			_raw_header.emplace_back(StompHeaderKeyValue(kv.first, kv.second));
+		}
+	}
+
+	body = content;
 }

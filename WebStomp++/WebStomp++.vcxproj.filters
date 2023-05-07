@@ -24,12 +24,18 @@
     <ClCompile Include="demo.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="WebStompServer.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="WebStompClient.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="WebStompType.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="WebStompServer.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

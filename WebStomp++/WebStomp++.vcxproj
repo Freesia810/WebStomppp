@@ -147,10 +147,12 @@
   <ItemGroup>
     <ClCompile Include="demo.cpp" />
     <ClCompile Include="WebStompClient.cpp" />
+    <ClCompile Include="WebStompServer.cpp" />
     <ClCompile Include="WebStompType.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="WebStompClient.h" />
+    <ClInclude Include="WebStompServer.h" />
     <ClInclude Include="WebStompType.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

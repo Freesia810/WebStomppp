@@ -14,6 +14,7 @@
 #include <unordered_map>
 #include <exception>
 #include <WinSock2.h>
+#include <functional>
 constexpr auto disconnect_receipt_id = "disconnect-42";
 
 namespace webstomppp {
@@ -22,6 +23,7 @@ namespace webstomppp {
 
 	enum class STOMP_PUBLIC StompCommandType {
 		UNKNOWN,
+		STOMP,
 		CONNECT,
 		CONNECTED,
 		SEND,
@@ -37,10 +39,13 @@ namespace webstomppp {
 
 	struct STOMP_PUBLIC StompCallbackMsg {
 		StompCommandType type{ StompCommandType::MESSAGE };
+		uint64_t session_id;
 		const char* body{};
-		char header_raw[512];
-		StompCallbackMsg(StompFrameHeader& header, const char* body);
+		char header_raw[1024];
+		StompCallbackMsg(StompFrameHeader& header, const char* body, uint64_t session_id = -1, StompCommandType type = StompCommandType::MESSAGE);
 	};
+
+	using callback_func = std::function<void(StompCallbackMsg)>;
 
 	struct STOMP_PUBLIC StompFrame {
 		StompCommandType type{ StompCommandType::CONNECT };
@@ -51,9 +56,14 @@ namespace webstomppp {
 		StompFrame(const char* raw_str);
 		std::string toRawString();
 		friend class WebStompClient;
+		friend class WebStompServer;
 	protected:
 		static void toByteFrame(const char* raw_str, char*& buf, size_t& len);
 		std::vector<StompHeaderKeyValue> _raw_header{};
+	};
+
+	struct STOMP_PUBLIC StompMessageFrame final : StompFrame{
+		StompMessageFrame(const char* destination, const char* subscription, const char* message_id, const char* content, const char* content_type, StompFrameHeader* user_defined_header);
 	};
 
 	struct STOMP_PUBLIC StompSendFrame : StompFrame {
@@ -173,6 +183,27 @@ namespace webstomppp {
 		StompDisconnectFrame() {
 			type = StompCommandType::DISCONNECT;
 			_raw_header.emplace_back(StompHeaderKeyValue("receipt", disconnect_receipt_id));
+		};
+	};
+
+	struct STOMP_PUBLIC StompReceiptFrame final : StompFrame{
+		StompReceiptFrame(const char* receipt_id) {
+			type = StompCommandType::RECEIPT;
+			_raw_header.emplace_back(StompHeaderKeyValue("receipt-id", receipt_id));
+		};
+	};
+
+	struct STOMP_PUBLIC StompConnectedFrame final : StompFrame{
+		StompConnectedFrame(const char* version, const char* session, const char* server = nullptr, const char* heart_beat = nullptr) {
+			type = StompCommandType::CONNECTED;
+			_raw_header.emplace_back(StompHeaderKeyValue("version", version));
+			_raw_header.emplace_back(StompHeaderKeyValue("session", session));
+			if (server != nullptr) {
+				_raw_header.emplace_back(StompHeaderKeyValue("server", server));
+			}
+			if (heart_beat != nullptr) {
+				_raw_header.emplace_back(StompHeaderKeyValue("heart_beat", heart_beat));
+			}
 		};
 	};
 

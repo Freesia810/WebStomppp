@@ -14,8 +14,7 @@
 namespace webstomppp {
 	using client = websocketpp::client<websocketpp::config::asio_client>;
 	using message_ptr = websocketpp::config::asio_client::message_type::ptr;
-	using callback_func = std::function<void(StompCallbackMsg)>;
-	using stomp_client_ptr = std::shared_ptr<WebStompClient>;
+	using stomp_client_ptr = std::shared_ptr<webstomppp::WebStompClient>;
 
 	class STOMP_PUBLIC WebStompClient {
 		client _ws_client;
