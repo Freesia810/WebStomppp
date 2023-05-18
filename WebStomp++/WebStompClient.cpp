@@ -21,10 +21,14 @@ void webstomppp::WebStompClient::_message_dispatcher(websocketpp::connection_hdl
 					(it->second)(StompCallbackMsg(stomp_msg.header, stomp_msg.body.c_str()));
 
 					StompAckFrame frame(stomp_msg.header["message-id"].c_str());
+					char* raw_str = nullptr;
 					char* buf = nullptr;
+					frame.toRawString(raw_str);
 					size_t len = 0;
-					StompAckFrame::toByteFrame(frame.toRawString().c_str(), buf, len);
+					StompAckFrame::toByteFrame(raw_str, buf, len);
+					delete raw_str;
 					_con->send(buf, len, websocketpp::frame::opcode::TEXT);
+					delete buf;
 				}
 				else {
 					throw StompException(StompExceptionType::SubcribeTopicNotFoundException);
@@ -53,10 +57,14 @@ void webstomppp::WebStompClient::_on_open(client* c, websocketpp::connection_hdl
 	auto host = tmp.substr(0, tmp.find_first_of('/'));
 
 	StompConnectFrame frame(host.c_str());
+	char* raw_str = nullptr;
+	frame.toRawString(raw_str);
 	char* buf = nullptr;
 	size_t len = 0;
-	StompConnectFrame::toByteFrame(frame.toRawString().c_str(), buf, len);
+	StompConnectFrame::toByteFrame(raw_str, buf, len);
+	delete raw_str;
 	_con->send(buf, len, websocketpp::frame::opcode::TEXT);
+	delete buf;
 }
 
 webstomppp::WebStompClient::WebStompClient()
@@ -104,10 +112,14 @@ void webstomppp::WebStompClient::Subscribe(const char* destination, webstomppp::
 	if (it != _topic_id_map.end()) return;
 
 	StompSubscribeFrame frame(destination, subscribe_id_gen);
+	char* raw_str = nullptr;
+	frame.toRawString(raw_str);
 	char* buf = nullptr;
 	size_t len = 0;
-	StompSubscribeFrame::toByteFrame(frame.toRawString().c_str(), buf, len);
+	StompSubscribeFrame::toByteFrame(raw_str, buf, len);
+	delete raw_str;
 	_con->send(buf, len, websocketpp::frame::opcode::TEXT);
+	delete buf;
 
 	_topic_id_map.insert(std::make_pair(destination, subscribe_id_gen++));
 	_topic_callback_map.insert(std::make_pair(destination, callback));
@@ -118,10 +130,14 @@ void webstomppp::WebStompClient::Unsubscribe(const char* destination)
 	if (it != _topic_id_map.end()) return;
 
 	StompUnsubscribeFrame frame(it->second);
+	char* raw_str = nullptr;
+	frame.toRawString(raw_str);
 	char* buf = nullptr;
 	size_t len = 0;
-	StompUnsubscribeFrame::toByteFrame(frame.toRawString().c_str(), buf, len);
+	StompUnsubscribeFrame::toByteFrame(raw_str, buf, len);
+	delete raw_str;
 	_con->send(buf, len, websocketpp::frame::opcode::TEXT);
+	delete buf;
 
 	_topic_id_map.erase(destination);
 	_topic_callback_map.erase(destination);
@@ -129,10 +145,14 @@ void webstomppp::WebStompClient::Unsubscribe(const char* destination)
 void webstomppp::WebStompClient::Disconnect()
 {
 	StompDisconnectFrame frame;
+	char* raw_str = nullptr;
+	frame.toRawString(raw_str);
 	char* buf = nullptr;
 	size_t len = 0;
-	StompDisconnectFrame::toByteFrame(frame.toRawString().c_str(), buf, len);
+	StompDisconnectFrame::toByteFrame(raw_str, buf, len);
+	delete raw_str;
 	_con->send(buf, len, websocketpp::frame::opcode::TEXT);
+	delete buf;
 	while (true) {
 		if (!_is_connected.load()) {
 			_con->close(websocketpp::close::status::normal, "close");
@@ -145,4 +165,16 @@ void webstomppp::WebStompClient::Send(const char* raw_str) {
 	size_t len = 0;
 	StompSendFrame::toByteFrame(raw_str, buf, len);
 	_con->send(buf, len, websocketpp::frame::opcode::TEXT);
+}
+
+void webstomppp::WebStompClient::SendJson(const char* des, const char* content) {
+	StompJsonSendFrame frame(des, content);
+	char* raw_str = nullptr;
+	frame.toRawString(raw_str);
+	char* buf = nullptr;
+	size_t len = 0;
+	StompSendFrame::toByteFrame(raw_str, buf, len);
+	delete raw_str;
+	_con->send(buf, len, websocketpp::frame::opcode::TEXT);
+	delete buf;
 }

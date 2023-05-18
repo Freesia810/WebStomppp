@@ -54,7 +54,7 @@ namespace webstomppp {
 
 		StompFrame() = default;
 		StompFrame(const char* raw_str);
-		std::string toRawString();
+		void toRawString(char*&);
 		friend class WebStompClient;
 		friend class WebStompServer;
 	protected:

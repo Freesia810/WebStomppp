@@ -1,5 +1,6 @@
 #include "WebStompType.h"
 #include <sstream>
+#include <string>
 
 
 webstomppp::StompFrame::StompFrame(const char* raw_str)
@@ -78,7 +79,7 @@ void webstomppp::StompFrame::toByteFrame(const char* raw_str, char*& buf, size_t
 	len = str.size() + 1;
 }
 
-std::string webstomppp::StompFrame::toRawString()
+void webstomppp::StompFrame::toRawString(char*& raw_str)
 {
 	std::stringstream ss;
 	switch (type)
@@ -126,7 +127,8 @@ std::string webstomppp::StompFrame::toRawString()
 
 	ss << "\n" << body;
 
-	return ss.str();
+	raw_str = new char[ss.str().size() + 1];
+	strcpy_s(raw_str, ss.str().size() + 1, ss.str().c_str());
 }
 
 webstomppp::StompCallbackMsg::StompCallbackMsg(StompFrameHeader& header, const char* body, uint64_t session_id, StompCommandType type)
@@ -139,6 +141,7 @@ webstomppp::StompCallbackMsg::StompCallbackMsg(StompFrameHeader& header, const c
 		ss << kv.first << ":" << kv.second << "\n";
 	}
 	std::string str = ss.str();
+	strcpy_s(this->header_raw, 1024, str.c_str());
 	strcpy_s(this->header_raw, 1023, str.c_str());
 }
 
