@@ -26,7 +26,7 @@ namespace webstomppp {
 		wss_client::connection_ptr _con_wss{};
 		std::string _uri{};
 		std::atomic_bool _is_connected{ true };
-		bool enable_ssl;
+		bool enable_ssl{false};
 
 		uint64_t subscribe_id_gen{ 0 };
 		std::unordered_map<std::string, uint64_t> _topic_id_map{};
@@ -37,7 +37,7 @@ namespace webstomppp {
 		void _message_dispatcher_ws(websocketpp::connection_hdl hdl, ws_client::message_ptr msg);
 		void _message_dispatcher_wss(websocketpp::connection_hdl hdl, wss_client::message_ptr msg);
 	public:
-		WebStompClient(bool ssl = false):enable_ssl(ssl){};
+		WebStompClient(bool ssl = false);
 		~WebStompClient();
 		void Connect(const char* uri);
 		void Disconnect();

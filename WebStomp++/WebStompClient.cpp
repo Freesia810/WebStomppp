@@ -147,8 +147,9 @@ static std::shared_ptr<boost::asio::ssl::context> on_tls_init() {
     return ctx;
 }
 
-webstomppp::WebStompClient::WebStompClient()
+webstomppp::WebStompClient::WebStompClient(bool ssl)
 {
+	enable_ssl = ssl;
 	if(enable_ssl){
 		// Set logging to be pretty verbose (everything except message payloads)
 		_wss_client.clear_access_channels(websocketpp::log::alevel::all);
