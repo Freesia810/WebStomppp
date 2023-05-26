@@ -1,6 +1,7 @@
 #pragma once
 
 #include <websocketpp/config/asio_no_tls_client.hpp>
+#include <websocketpp/config/asio_client.hpp>
 #include <websocketpp/client.hpp>
 #include <iostream>
 #include <unordered_map>
@@ -12,26 +13,31 @@
 #include "WebStompType.h"
 
 namespace webstomppp {
-	using client = websocketpp::client<websocketpp::config::asio_client>;
+	using ws_client = websocketpp::client<websocketpp::config::asio_client>;
+	using wss_client = websocketpp::client<websocketpp::config::asio_tls_client>;
 	using message_ptr = websocketpp::config::asio_client::message_type::ptr;
 	using stomp_client_ptr = std::shared_ptr<webstomppp::WebStompClient>;
 
 	class STOMP_PUBLIC WebStompClient {
-		client _ws_client;
+		ws_client _ws_client;
+		wss_client _wss_client;
 		websocketpp::lib::error_code _ec{};
-		client::connection_ptr _con{};
+		ws_client::connection_ptr _con_ws{};
+		wss_client::connection_ptr _con_wss{};
 		std::string _uri{};
 		std::atomic_bool _is_connected{ true };
+		bool enable_ssl;
 
 		uint64_t subscribe_id_gen{ 0 };
 		std::unordered_map<std::string, uint64_t> _topic_id_map{};
 		std::unordered_map<std::string, callback_func> _topic_callback_map{};
 
-		void _on_open(client* c, websocketpp::connection_hdl hdl);
-		void _message_dispatcher(websocketpp::connection_hdl hdl, client::message_ptr msg);
-
+		void _on_open_ws(ws_client* c, websocketpp::connection_hdl hdl);
+		void _on_open_wss(wss_client* c, websocketpp::connection_hdl hdl);
+		void _message_dispatcher_ws(websocketpp::connection_hdl hdl, ws_client::message_ptr msg);
+		void _message_dispatcher_wss(websocketpp::connection_hdl hdl, wss_client::message_ptr msg);
 	public:
-		WebStompClient();
+		WebStompClient(bool ssl = false):enable_ssl(ssl){};
 		~WebStompClient();
 		void Connect(const char* uri);
 		void Disconnect();
