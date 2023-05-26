@@ -6,6 +6,7 @@
 
 #ifdef __WINDOWS__
 #define STOMP_PUBLIC   __declspec(dllexport)
+#include <WinSock2.h>
 #else
 #define STOMP_PUBLIC  
 #endif
@@ -13,7 +14,6 @@
 #include <string>
 #include <unordered_map>
 #include <exception>
-#include <WinSock2.h>
 #include <functional>
 constexpr auto disconnect_receipt_id = "disconnect-42";
 
