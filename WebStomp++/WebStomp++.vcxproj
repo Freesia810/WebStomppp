@@ -120,11 +120,13 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>F:\Visual Studio Projects\WebStomp++\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>libcrypto.lib;libssl.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -147,12 +149,10 @@
   <ItemGroup>
     <ClCompile Include="demo.cpp" />
     <ClCompile Include="WebStompClient.cpp" />
-    <ClCompile Include="WebStompServer.cpp" />
     <ClCompile Include="WebStompType.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="WebStompClient.h" />
-    <ClInclude Include="WebStompServer.h" />
     <ClInclude Include="WebStompType.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

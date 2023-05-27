@@ -4,14 +4,11 @@
 
 int main() {
 	webstomppp::WebStompClient client(true);
-	client.Connect("wss://127.0.0.1:7285");
+	client.Connect("wss://47.102.200.110/meta-trade/stomp");
 	std::thread t(&webstomppp::WebStompClient::Run, &client);
 	Sleep(10000);
 	client.Disconnect();
 	t.join();
 
-	// webstomppp::WebStompServer server;
-	// server.Init();
-	// server.Run(7285);
 	return 0;
 }
